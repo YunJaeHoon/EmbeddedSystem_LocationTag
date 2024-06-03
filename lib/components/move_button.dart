@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:location_tag/screens/home_screen.dart';
-import 'package:location_tag/screens/login_screen.dart';
 
 class MoveButton extends StatelessWidget {
 
   final String screen;
   final String description;
+  final bool isLogin;
 
   const MoveButton({
     super.key,
     required this.screen,
     required this.description,
+    required this.isLogin
   });
 
   @override
@@ -21,17 +22,12 @@ class MoveButton extends StatelessWidget {
           context,
           PageRouteBuilder(
             pageBuilder: (context, animation, secondaryAnimation) {
-              if(screen == 'home')
+              switch (screen)
               {
-                return const HomeScreen();
-              }
-              else if(screen == 'login')
-              {
-                return const LoginScreen();
-              }
-              else
-              {
-                return Container();
+                case 'home':
+                  return HomeScreen(isLogin: isLogin);
+                default:
+                  return Container();
               }
             }
           ),

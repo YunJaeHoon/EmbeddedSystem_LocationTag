@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -29,8 +28,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
         // 상단 바
         appBar: const PreferredSize(
-          preferredSize: Size.fromHeight(80),
-          child: CustomAppBar(screenTitle: '위치태그'),
+          preferredSize: Size.fromHeight(70),
+          child: CustomAppBar(screenTitle: '로그인 / 회원가입'),
         ),
 
         body: Column(
@@ -88,7 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       context,
                       PageRouteBuilder(
                         pageBuilder: (context, animation, secondaryAnimation) {
-                          return const HomeScreen();
+                          return const HomeScreen(isLogin: true);
                         },
                       ),
                     );
@@ -105,7 +104,7 @@ class _LoginScreenState extends State<LoginScreen> {
             const SizedBox(height: 50),
 
             // 돌아가기 버튼
-            const MoveButton(screen: 'home', description: '돌아가기'),
+            const MoveButton(screen: 'home', description: '돌아가기', isLogin: false),
 
           ],
         )
