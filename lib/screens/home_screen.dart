@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:location_tag/components/custom_app_bar.dart';
+import 'package:location_tag/components/move_button.dart';
 import 'package:location_tag/screens/login_screen.dart';
 import 'package:location_tag/screens/my_page_screen.dart';
 
@@ -23,47 +25,51 @@ class HomeScreen extends StatelessWidget {
           child: CustomAppBar(screenTitle: '위치태그'),
         ),
 
-        body: Column(
-          children: [
-
-            // 로그인 / 회원가입 버튼
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Text(
-                  isLogin ? '마이페이지' : '로그인 / 회원가입',
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+          
+              // 로그인 / 회원가입 버튼
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    isLogin ? '마이페이지' : '로그인 / 회원가입',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600
+                    ),
                   ),
-                ),
-                const SizedBox(width: 5),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pushReplacement(
-                      context,
-                      PageRouteBuilder(
-                        pageBuilder: (context, animation, secondaryAnimation) {
-                          return isLogin ? const MyPageScreen() : const LoginScreen();
-                        }
-                      ),
-                    );
-                  },
-                  child: const Center(
-                    child: Icon(
-                      Icons.account_circle,
-                      size: 50,
-                      color: Colors.blue,
-                    )
+                  const SizedBox(width: 5),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        PageRouteBuilder(
+                          pageBuilder: (context, animation, secondaryAnimation) {
+                            return isLogin ? const MyPageScreen() : const LoginScreen();
+                          }
+                        ),
+                      );
+                    },
+                    child: const Center(
+                      child: Icon(
+                        Icons.account_circle,
+                        size: 50,
+                        color: Colors.blue,
+                      )
+                    ),
                   ),
-                ),
-                const SizedBox(width: 10)
-              ],
-            ),
-
-            const SizedBox(height: 10),
-            
-          ],
+                  const SizedBox(width: 10)
+                ],
+              ),
+          
+              const SizedBox(height: 10),
+          
+              MoveButton(screen: 'map', description: '지도', isLogin: isLogin)
+              
+            ],
+          ),
         )
       ),
     );

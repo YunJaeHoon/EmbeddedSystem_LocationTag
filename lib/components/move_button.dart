@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:location_tag/screens/home_screen.dart';
+import 'package:location_tag/screens/map_screen.dart';
 
 class MoveButton extends StatelessWidget {
 
@@ -26,6 +27,8 @@ class MoveButton extends StatelessWidget {
               {
                 case 'home':
                   return HomeScreen(isLogin: isLogin);
+                case 'map':
+                  return const MapScreen();
                 default:
                   return Container();
               }
