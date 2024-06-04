@@ -65,8 +65,12 @@ class HomeScreen extends StatelessWidget {
               ),
           
               const SizedBox(height: 10),
+
+              isLogin ? MoveButton(screen: 'add_new_tag', description: '새로운 위치 태그 추가', isLogin: isLogin) : Container(),
           
-              MoveButton(screen: 'map', description: '지도', isLogin: isLogin)
+              const SizedBox(height: 10),
+
+              isLogin ? MoveButton(screen: 'map', description: '지도', isLogin: isLogin) : Container(),
               
             ],
           ),

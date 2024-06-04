@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:location_tag/screens/add_new_tag.dart';
 import 'package:location_tag/screens/home_screen.dart';
 import 'package:location_tag/screens/map_screen.dart';
 
@@ -29,6 +30,8 @@ class MoveButton extends StatelessWidget {
                   return HomeScreen(isLogin: isLogin);
                 case 'map':
                   return const MapScreen();
+                case 'add_new_tag':
+                  return const AddNewTag();
                 default:
                   return Container();
               }
