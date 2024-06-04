@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:location/location.dart';
 import 'package:location_tag/components/custom_app_bar.dart';
 import 'package:location_tag/screens/home_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -200,17 +201,34 @@ class _AddNewTagState extends State<AddNewTag> {
 
                           print(serialNumber);
 
-                          /*LocationPermission permission = await Geolocator.checkPermission();
-                          if (permission == LocationPermission.denied) {
-                            permission = await Geolocator.requestPermission();
-                            if (permission == LocationPermission.denied) {
-                              return Future.error('permissions are denied');
+                          Location location = Location();
+                          PermissionStatus permissionGranted;
+                          bool locationEnabled;
+                          LocationData locationData;
+
+                          locationEnabled = await location.serviceEnabled();
+                          if(!locationEnabled)
+                          {
+                            locationEnabled = await location.requestService();
+                            if(!locationEnabled)
+                            {
+                              return;
                             }
                           }
 
-                          Position position = await Geolocator.getCurrentPosition();*/
+                          permissionGranted = await location.hasPermission();
+                          if(permissionGranted == PermissionStatus.denied)
+                          {
+                            permissionGranted = await location.requestPermission();
+                            if(permissionGranted != PermissionStatus.granted)
+                            {
+                              return;
+                            }
+                          }
 
-                          final data = {"serialNumber": serialNumber ,"name": "test", "location": "test"};
+                          locationData = await location.getLocation();
+
+                          final data = {"serialNumber": serialNumber ,"name": "test", "location": locationData.toString()};
 
                           url = 'http://172.207.208.62/v1/trackers';
                           request = Uri.parse(url);
