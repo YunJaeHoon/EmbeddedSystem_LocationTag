@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:location/location.dart';
 import 'package:location_tag/components/custom_app_bar.dart';
+import 'package:location_tag/components/move_button.dart';
 import 'package:location_tag/screens/home_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -25,6 +26,7 @@ class _AddNewTagState extends State<AddNewTag> {
   void initState() {
     super.initState();
     requestPermission();
+    scanResults.clear();
   }
 
   void requestPermission() async {
@@ -52,10 +54,12 @@ class _AddNewTagState extends State<AddNewTag> {
 
     setState(() {
       isScanning = true;
+      scanResults.clear();
     });
 
     await FlutterBluePlus.startScan(
-      timeout: const Duration(seconds: 15));
+      timeout: const Duration(seconds: 4)
+    );
 
     FlutterBluePlus.scanResults.listen((results) {
 
@@ -65,6 +69,35 @@ class _AddNewTagState extends State<AddNewTag> {
 
           setState(() {
             scanResults = results;
+
+            scanResults[0] = ScanResult(
+              device: BluetoothDevice(remoteId: const DeviceIdentifier('test')),
+              advertisementData: AdvertisementData(
+                advName: 'new location tag',
+                txPowerLevel: 1,
+                appearance: 1,
+                connectable: true,
+                manufacturerData: <int, List<int>>{},
+                serviceData: <Guid, List<int>>{},
+                serviceUuids: List.empty()
+              ),
+              rssi: 1,
+              timeStamp: DateTime.now()
+            );
+            scanResults[1] = ScanResult(
+              device: BluetoothDevice(remoteId: const DeviceIdentifier('08:A9:30:7B:7F:E7')),
+              advertisementData: AdvertisementData(
+                advName: 'HC-06',
+                txPowerLevel: 1,
+                appearance: 1,
+                connectable: true,
+                manufacturerData: <int, List<int>>{},
+                serviceData: <Guid, List<int>>{},
+                serviceUuids: List.empty()
+              ),
+              rssi: 1,
+              timeStamp: DateTime.now()
+            );
           });
       }
       else
@@ -103,6 +136,7 @@ class _AddNewTagState extends State<AddNewTag> {
   Widget scanningDevices() {
     return Column(
       children: [
+        const MoveButton(screen: 'home', description: '돌아가기', isLogin: true),
         Row(
           children: [
             ElevatedButton(
@@ -150,7 +184,7 @@ class _AddNewTagState extends State<AddNewTag> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          scanResult.device.advName.toString(),
+                          scanResult.advertisementData.advName.toString(),
                           style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
