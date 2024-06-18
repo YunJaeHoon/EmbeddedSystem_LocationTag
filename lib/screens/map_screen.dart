@@ -26,7 +26,7 @@ class _MapScreenState extends State<MapScreen> {
 
   // 내 트래커 정보 가져오는 함수
   Future<List<Map<String, dynamic>>?> getMyTrackers() async {
-    String url = 'http://172.207.208.62/v1/trackers';
+    String url = 'http://20.40.102.76/v1/trackers';
     var request = Uri.parse(url);
 
     var prefs = await SharedPreferences.getInstance();
@@ -43,6 +43,8 @@ class _MapScreenState extends State<MapScreen> {
 
     if(response.statusCode == 200)
     {
+      print("there is tags~~~~~~~");
+
       var decodedResponse = jsonDecode(response.body) as Map<String, dynamic>;
       var trackers = decodedResponse['trackers'] as List<dynamic>;
 
@@ -50,6 +52,7 @@ class _MapScreenState extends State<MapScreen> {
     }
     else
     {
+      print("there is no location tag!!!!!!!!");
       return null;
     }
   }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:location_tag/components/custom_app_bar.dart';
 import 'package:location_tag/components/move_button.dart';
 import 'package:location_tag/screens/login_screen.dart';

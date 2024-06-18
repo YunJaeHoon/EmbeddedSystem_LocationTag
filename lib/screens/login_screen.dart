@@ -64,7 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 final data = {"name": name.text, "password": password.text};
 
-                const String url = 'http://172.207.208.62/v1/users/login';
+                const String url = 'http://20.40.102.76/v1/users/login';
                 final request = Uri.parse(url);
                 final response = await http.post(
                   request,

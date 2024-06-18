@@ -18,7 +18,6 @@ class AddNewTag extends StatefulWidget {
 }
 
 class _AddNewTagState extends State<AddNewTag> {
-
   bool isScanning = false;
   List<ScanResult> scanResults = [];
 
@@ -30,105 +29,114 @@ class _AddNewTagState extends State<AddNewTag> {
   }
 
   void requestPermission() async {
-    if (Platform.isAndroid) {
-      await FlutterBluePlus.turnOn();
-    }
-
-    if (await FlutterBluePlus.isSupported == false) {
-      print("Bluetooth not supported by this device");
-    }
-
-    FlutterBluePlus.adapterState.listen((BluetoothAdapterState state) {
-      print(state);
-      if (state == BluetoothAdapterState.on) {
-        startScan();
-      } else {
-        print("error!!!!!!!");
+    try {
+      if (Platform.isAndroid) {
+        await FlutterBluePlus.turnOn();
       }
-    });
+
+      if (await FlutterBluePlus.isSupported == false) {
+        print("Bluetooth not supported by this device");
+        return;
+      }
+
+      FlutterBluePlus.adapterState.listen((BluetoothAdapterState state) {
+        print(state);
+        if (state == BluetoothAdapterState.on) {
+          startScan();
+        } else {
+          print("Bluetooth adapter is not on!");
+        }
+      });
+    } catch (e) {
+      print("Error in requestPermission: $e");
+    }
   }
 
   void startScan() async {
+    try {
+      print('Starting scan');
 
-    print('try connection');
+      if (mounted) {
+        setState(() {
+          isScanning = true;
+          scanResults.clear();
+        });
+      }
 
-    setState(() {
-      isScanning = true;
-      scanResults.clear();
-    });
+      await FlutterBluePlus.startScan(timeout: const Duration(seconds: 4));
 
-    await FlutterBluePlus.startScan(
-      timeout: const Duration(seconds: 4)
-    );
-
-    FlutterBluePlus.scanResults.listen((results) {
-
-      if (results.isNotEmpty) {
-          ScanResult r = results.last; // the most recently found device
-          print('${r.device.remoteId}: "${r.advertisementData.advName}" found!');
-
+      FlutterBluePlus.scanResults.listen((results) {
+        
+        if (mounted) {
           setState(() {
             scanResults = results;
 
-            scanResults[0] = ScanResult(
-              device: BluetoothDevice(remoteId: const DeviceIdentifier('test')),
-              advertisementData: AdvertisementData(
-                advName: 'new location tag',
-                txPowerLevel: 1,
-                appearance: 1,
-                connectable: true,
-                manufacturerData: <int, List<int>>{},
-                serviceData: <Guid, List<int>>{},
-                serviceUuids: List.empty()
-              ),
-              rssi: 1,
-              timeStamp: DateTime.now()
-            );
-            scanResults[1] = ScanResult(
-              device: BluetoothDevice(remoteId: const DeviceIdentifier('08:A9:30:7B:7F:E7')),
-              advertisementData: AdvertisementData(
-                advName: 'HC-06',
-                txPowerLevel: 1,
-                appearance: 1,
-                connectable: true,
-                manufacturerData: <int, List<int>>{},
-                serviceData: <Guid, List<int>>{},
-                serviceUuids: List.empty()
-              ),
-              rssi: 1,
-              timeStamp: DateTime.now()
-            );
+            if (scanResults.length >= 2) {
+              scanResults[0] = ScanResult(
+                device: BluetoothDevice(remoteId: const DeviceIdentifier('test')),
+                advertisementData: AdvertisementData(
+                  advName: 'new location tag',
+                  txPowerLevel: 1,
+                  appearance: 1,
+                  connectable: true,
+                  manufacturerData: <int, List<int>>{},
+                  serviceData: <Guid, List<int>>{},
+                  serviceUuids: List.empty()
+                ),
+                rssi: 1,
+                timeStamp: DateTime.now()
+              );
+              scanResults[1] = ScanResult(
+                device: BluetoothDevice(remoteId: const DeviceIdentifier('08:A9:30:7B:7F:E7')),
+                advertisementData: AdvertisementData(
+                  advName: 'HC-06',
+                  txPowerLevel: 1,
+                  appearance: 1,
+                  connectable: true,
+                  manufacturerData: <int, List<int>>{},
+                  serviceData: <Guid, List<int>>{},
+                  serviceUuids: List.empty()
+                ),
+                rssi: 1,
+                timeStamp: DateTime.now()
+              );
+            }
           });
-      }
-      else
-      {
-        print('nothing...');
-      }
+        }
 
-    });
-
+        if (results.isNotEmpty) {
+          print('${results.last.device.remoteId}: "${results.last.advertisementData.advName}" found!');
+        } else {
+          print('No devices found...');
+        }
+      });
+    } catch (e) {
+      print("Error in startScan: $e");
+    }
   }
 
   Future<void> stopScan() async {
+    try {
+      if (mounted) {
+        setState(() {
+          isScanning = false;
+        });
+      }
 
-    setState(() {
-      isScanning = false;
-    });
-
-    print('scanResults : $scanResults');
-
-    await FlutterBluePlus.stopScan();
+      print('Stopping scan');
+      await FlutterBluePlus.stopScan();
+    } catch (e) {
+      print("Error in stopScan: $e");
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       appBar: const PreferredSize(
         preferredSize: Size.fromHeight(70),
         child: CustomAppBar(screenTitle: '새로운 위치 태그 연결'),
       ),
-
       body: scanningDevices(),
     );
   }
@@ -154,21 +162,21 @@ class _AddNewTagState extends State<AddNewTag> {
           child: Text(
             'Scanning Devices',
             style: TextStyle(
-                color: Colors.blue[300], fontSize: 18, fontWeight: FontWeight.w700),
+              color: Colors.blue[300],
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ),
         const SizedBox(height: 10),
         Expanded(
           child: ListView.builder(
-          
             itemCount: scanResults.length,
             itemBuilder: (BuildContext context, int index) {
-          
               var scanResult = scanResults[index];
-          
+
               return Container(
-                margin: const EdgeInsets.symmetric(
-                    horizontal: 5.0, vertical: 5.0),
+                margin: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
                 height: 100,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
@@ -199,9 +207,7 @@ class _AddNewTagState extends State<AddNewTag> {
                         ),
                       ],
                     ),
-                    const SizedBox(
-                      width: 20,
-                    ),
+                    const SizedBox(width: 20),
                     ElevatedButton(
                       style: ButtonStyle(
                         backgroundColor: WidgetStateProperty.all(
@@ -211,9 +217,9 @@ class _AddNewTagState extends State<AddNewTag> {
 
                       onPressed: () async {
 
-                        scanResult.device.connect();
+                        // scanResult.device.connect();
 
-                        String url = 'http://172.207.208.62/v1/trackers/serial-number';
+                        String url = 'http://20.40.102.76/v1/trackers/serial-number';
                         var request = Uri.parse(url);
 
                         var prefs = await SharedPreferences.getInstance();
@@ -264,7 +270,7 @@ class _AddNewTagState extends State<AddNewTag> {
 
                           final data = {"serialNumber": serialNumber ,"name": "test", "location": locationData.toString()};
 
-                          url = 'http://172.207.208.62/v1/trackers';
+                          url = 'http://20.40.102.76/v1/trackers';
                           request = Uri.parse(url);
                           response = await http.post(
                             request,

@@ -27,7 +27,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
 
   // 마이페이지 가져오는 함수
   Future<Map<String, dynamic>?> getMyInfo() async {
-    String url = 'http://172.207.208.62/v1/users/me';
+    String url = 'http://20.40.102.76/v1/users/me';
     var request = Uri.parse(url);
 
     var prefs = await SharedPreferences.getInstance();
@@ -55,7 +55,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
 
   // 내 트래커 정보 가져오는 함수
   Future<List<Map<String, dynamic>>?> getMyTrackers() async {
-    String url = 'http://172.207.208.62/v1/trackers';
+    String url = 'http://20.40.102.76/v1/trackers';
     var request = Uri.parse(url);
 
     var prefs = await SharedPreferences.getInstance();
